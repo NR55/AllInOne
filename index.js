@@ -3,10 +3,18 @@ const app = express();
 const { google } = require('googleapis');
 require('dotenv').config(); // Load environment variables
 
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
-app.use(express.static(__dirname + "public"));
+app.use('/images', express.static(__dirname + '/public/images/', {
+    setHeaders: (res, path, stat) => {
+        if (path.endsWith('.ico')) {
+            res.set('Content-Type', 'image/x-icon');
+        }
+    }
+}));
+
 
 // Use environment variables
 const sheetId = process.env.SHEET_ID;
@@ -82,7 +90,6 @@ app.get('/iplist', async (req, res) => {
         sheetData.forEach(element => {
             result.push(element[0]); 
         });
-        console.log(result)
         return res.send(result);
     } catch (error) {
         console.error('Error retrieving Google Sheet:', error);

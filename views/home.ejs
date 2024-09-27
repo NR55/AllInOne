@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All In One</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <!-- <link rel="icon" href="/images/favicon.ico"> -->
     <style>
         :root {
             --background-color-dark: #121212;
@@ -219,15 +221,17 @@
             background-color: var(--button-hover-bg-light);
         }
     </style>
+    <script>
+        if(!localStorage.getItem('dark-mode'))
+            localStorage.setItem('dark-mode', true)
+    </script>
 </head>
 <body>
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
         <button id="modalButtons" onclick="openIPModal()">Open IP</button>
         <button id="modalButtons" onclick="openModal()">Create To-Do Item</button>
-        <button id="modalButtons" onclick="toggleDarkMode()">Toggle Light/Dark Mode</button>
+        <button id="modalButtons" onclick="toggleDarkMode()">🌓</button>
     </div>
-
-
 
     <div class="container">
         <div class="priority-list">
@@ -251,10 +255,10 @@
             <h1>Create a To-Do Item</h1>
             <form id="todo-form" action="./create" method="POST">
                 <label for="name">Task Name (required):</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="todoname" name="name" required>
 
                 <label for="description">Task Description (optional):</label>
-                <textarea id="description" name="description" rows="3"></textarea>
+                <textarea id="tododescription" name="description" rows="3"></textarea>
 
                 <label for="priority">Priority:</label>
                 <input type="range" id="priority" name="priority" min="1" max="3" step="1" value="1">
@@ -272,7 +276,7 @@
     <div id="ipModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeIPModal()">&times;</span>
-            <h1>Choose the Destination : </h1>
+            <h1>Choose the IP : </h1>
             <ul id="listOfDest"></ul>
             <form id="ip-form" action="./iplist" method="POST">
                 <label for="ip">IP Address:</label>
@@ -286,11 +290,15 @@
         // Function to open the modal
         function openModal() {
             document.getElementById('todoModal').style.display = 'block';
+            
         }
 
         // Function to close the modal
         function closeModal() {
             document.getElementById('todoModal').style.display = 'none';
+            document.getElementById('todoname').value = '';
+            document.getElementById('tododescription').value = '';
+            document.getElementById('priority').value = 1;
         }
 
         // Function to open the modal
@@ -352,6 +360,7 @@
         // Function to close the modal
         function closeIPModal() {
             document.getElementById('ipModal').style.display = 'none';
+            document.getElementById('ip').value = '';
         }
 
 
@@ -472,6 +481,7 @@
     </script>
 
     <script>
+        const isDarkMode = localStorage.getItem('dark-mode') === 'true';
         // Check if a dark mode preference is already saved
         if (!isDarkMode) {
             document.body.classList.add('light-mode');
