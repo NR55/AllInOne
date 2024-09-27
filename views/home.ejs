@@ -1,16 +1,494 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script>
-        function serverRedirect() {
-            window.open("http://192.168.29.176:11030/", '_blank');
+    <title>All In One</title>
+    <style>
+        :root {
+            --background-color-dark: #121212;
+            --text-color-dark: #f0f0f0;
+            --card-background-dark: #1e1e1e;
+            --border-color-dark: #333;
+            --button-bg-dark: #333;
+            --button-hover-bg-dark: #555;
+
+            --background-color-light: #f4f4f9;
+            --text-color-light: #333;
+            --card-background-light: #fff;
+            --border-color-light: #ddd;
+            --button-bg-light: #007bff;
+            --button-hover-bg-light: #0056b3;
         }
-    </script>
+
+        /* Default to dark mode */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color-dark);
+            color: var(--text-color-dark);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+
+        h1,
+        h3 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color-dark);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .priority-list {
+            border: 1px solid var(--border-color-dark);
+            border-radius: 8px;
+            padding: 20px;
+            width: 30%;
+            background-color: var(--card-background-dark);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .priority-list h3 {
+            border-bottom: 1px solid var(--border-color-dark);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .priority-list ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color-dark);
+        }
+
+        .priority-list ul li:last-child {
+            border-bottom: none;
+        }
+
+        .priority-list button {
+            padding: 6px 12px;
+            font-size: 0.9em;
+            border: none;
+            background-color: var(--button-bg-dark);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .priority-list button:hover {
+            background-color: var(--button-hover-bg-dark);
+        }
+
+        /* Styles for modal (popup) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--card-background-dark);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #fff;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form label {
+            margin-bottom: 6px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        form input,
+        form textarea,
+        form select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color-dark);
+            margin-bottom: 15px;
+            font-size: 1em;
+            background-color: var(--card-background-dark);
+            color: var(--text-color-dark);
+        }
+
+        form button {
+            padding: 10px;
+            font-size: 1em;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #218838;
+        }
+
+        .priority-range {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #modalButtons {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: white;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #modalButtons:hover {
+            background-color: #218838;
+        }
+
+        /* Light mode styles */
+        body.light-mode {
+            background-color: var(--background-color-light);
+            color: var(--text-color-light);
+        }
+
+        .priority-list.light-mode {
+            background-color: var(--card-background-light);
+            border-color: var(--border-color-light);
+        }
+
+        h1.light-mode,
+        h3.light-mode {
+            color: var(--text-color-light);
+        }
+
+        .modal-content.light-mode {
+            background-color: var(--card-background-light);
+        }
+
+        form input.light-mode,
+        form textarea.light-mode {
+            background-color: var(--card-background-light);
+            color: var(--text-color-light);
+        }
+
+        .priority-list button.light-mode {
+            background-color: var(--button-bg-light);
+        }
+
+        .priority-list button.light-mode:hover {
+            background-color: var(--button-hover-bg-light);
+        }
+    </style>
 </head>
 <body>
-    <button id="serverRedirect" onclick="serverRedirect()">View Local File System</button>
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <button id="modalButtons" onclick="openIPModal()">Open IP</button>
+        <button id="modalButtons" onclick="openModal()">Create To-Do Item</button>
+        <button id="modalButtons" onclick="toggleDarkMode()">Toggle Light/Dark Mode</button>
+    </div>
+
+
+
+    <div class="container">
+        <div class="priority-list">
+            <h3>High Priority</h3>
+            <ul id="highPriorityList"></ul>
+        </div>
+        <div class="priority-list">
+            <h3>Medium Priority</h3>
+            <ul id="mediumPriorityList"></ul>
+        </div>
+        <div class="priority-list">
+            <h3>Low Priority</h3>
+            <ul id="lowPriorityList"></ul>
+        </div>
+    </div>
+
+    <!-- Modal for To-Do Form -->
+    <div id="todoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h1>Create a To-Do Item</h1>
+            <form id="todo-form" action="./create" method="POST">
+                <label for="name">Task Name (required):</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="description">Task Description (optional):</label>
+                <textarea id="description" name="description" rows="3"></textarea>
+
+                <label for="priority">Priority:</label>
+                <input type="range" id="priority" name="priority" min="1" max="3" step="1" value="1">
+                <div class="priority-range">
+                    <span>Low</span>
+                    <span>High</span>
+                </div>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for IP Addresses -->
+    <div id="ipModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeIPModal()">&times;</span>
+            <h1>Choose the Destination : </h1>
+            <ul id="listOfDest"></ul>
+            <form id="ip-form" action="./iplist" method="POST">
+                <label for="ip">IP Address:</label>
+                <input type="text" id="ip" name="ip" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Function to open the modal
+        function openModal() {
+            document.getElementById('todoModal').style.display = 'block';
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('todoModal').style.display = 'none';
+        }
+
+        // Function to open the modal
+        async function openIPModal() {
+            try {
+                const response = await fetch('/iplist');
+                data = await response.json()
+
+                let ul = document.getElementById('listOfDest')
+                ul.innerHTML = ""
+                data.forEach(id => {
+                    const button = document.createElement('button');
+                    button.textContent = `${id}`;
+                    button.id = "modalButtons"
+                    const li = document.createElement('li');
+                    button.onclick = function () {
+                        window.open(`http://${id}:11030/`, '_blank');
+                    };
+                    li.append(button);
+                    ul.append(li)
+                    ul.append(document.createElement('br'))
+                })
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+            document.getElementById('ipModal').style.display = 'block';
+
+        }
+
+
+        document.getElementById('ip-form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent form submission to allow custom handling
+            const formData = new FormData(this); // Collect form data
+            const formJSON = {};
+            formData.forEach((value, key) => {
+                formJSON[key] = value;
+            });
+
+            fetch('./iplist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formJSON)
+            })
+                .then(response => { }) // Parse JSON response
+                .then(data => {
+                    console.log('Success:', data);
+                    closeIPModal(); // Close the modal on success
+                    // fetchDataAndDisplay();
+                    openIPModal();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+
+        // Function to close the modal
+        function closeIPModal() {
+            document.getElementById('ipModal').style.display = 'none';
+        }
+
+
+        document.getElementById('todo-form').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent form submission to allow custom handling
+            const formData = new FormData(this); // Collect form data
+            const creationTime = new Date().toISOString(); // Add creation time
+            formData.append('Creation Time', creationTime);
+
+            // Convert form data to JSON
+            const formJSON = {};
+            formData.forEach((value, key) => {
+                formJSON[key] = value;
+            });
+
+            // Send the form data via POST request
+            fetch('./create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formJSON)
+            })
+                .then(response => { }) // Parse JSON response
+                .then(data => {
+                    console.log('Success:', data);
+                    closeModal(); // Close the modal on success
+                    fetchDataAndDisplay();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+
+        // Function to fetch data and display in three lists
+        async function fetchDataAndDisplay() {
+            try {
+                // Fetch data from the server (assumed to return JSON data)
+                const response = await fetch('./data');
+                const data = await response.json(); // Assuming data is in array-of-arrays format
+
+                // Separate items by priority
+                const highPriority = [];
+                const mediumPriority = [];
+                const lowPriority = [];
+
+                // Categorize the data based on priority
+                data.forEach(item => {
+                    if (item[5] == 3) {
+                        highPriority.push([item[0], item[1]]); // Assuming each item has a name and priority
+                    } else if (item[5] == 2) {
+                        mediumPriority.push([item[0], item[1]]);
+                    } else if (item[5] == 1) {
+                        lowPriority.push([item[0], item[1]]);
+                    }
+                });
+
+                renderList('highPriorityList', highPriority);
+                renderList('mediumPriorityList', mediumPriority);
+                renderList('lowPriorityList', lowPriority);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        function renderList(elementId, items) {
+            const ulElement = document.getElementById(elementId);
+            ulElement.innerHTML = '';
+
+            items.forEach(item => {
+                const li = document.createElement('li');
+                const textButton = document.createElement('button');
+                textButton.textContent = item[1];
+                const button = document.createElement('button');
+                button.textContent = 'Complete';
+                button.onclick = function () {
+                    fetch(`/complete/${item[0]}`, { method: 'POST' })
+                        .then(response => {
+                            if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                alert('Failed to complete the task.');
+                            }
+                        });
+                };
+                textButton.onclick = function () {
+                    fetch(`/information/${item[0]}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            let newData = data
+                            message = `\tTitle : ${newData[1]}\n`
+                            if (newData[2].length > 0)
+                                message += `\tDescription : ${newData[2]}\n`
+                            message += `\tCreated Date and Time : ${newData[3]}\n`
+                            message += `\tCompleted : ${newData[4]}\n`
+                            diff = parseInt(data[5])
+                            if (diff == 1)
+                                diff = "Low"
+                            else if (diff == 2)
+                                diff = "Medium"
+                            else if (diff == 3)
+                                diff = "High"
+                            message += `\tPriority : ${diff}\n`
+                            alert(`Information:\n${message}`);
+                        })
+                        .catch(error => {
+                            alert('Error fetching information.');
+                        });
+                };
+                li.appendChild(textButton);
+                li.appendChild(button);
+                ulElement.appendChild(li);
+            });
+        }
+
+        window.onload = fetchDataAndDisplay;
+    </script>
+
+    <script>
+        // Check if a dark mode preference is already saved
+        if (!isDarkMode) {
+            document.body.classList.add('light-mode');
+            document.querySelectorAll('.priority-list, h3, form input, form textarea, .modal-content, .priority-list button')
+                .forEach(element => element.classList.add('light-mode'));
+        }
+
+        // Toggle dark and light modes
+        function toggleDarkMode() {
+            document.body.classList.toggle('light-mode');
+            document.querySelectorAll('.priority-list, h3, form input, form textarea, .modal-content, .priority-list button')
+                .forEach(element => element.classList.toggle('light-mode'));
+
+            // Save the user's preference
+            localStorage.setItem('dark-mode', !document.body.classList.contains('light-mode'));
+        }
+    </script>
 </body>
+
 </html>
