@@ -1,22 +1,23 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 const { google } = require('googleapis');
-require('dotenv').config(); // Load environment variables
+const { setTimeout } = require('timers');
+require('dotenv').config();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 app.set("views", __dirname + "/views");
 app.set("view engine", "ejs");
-app.use('/images', express.static(__dirname + '/public/images/', {
-    setHeaders: (res, path, stat) => {
-        if (path.endsWith('.ico')) {
-            res.set('Content-Type', 'image/x-icon');
-        }
-    }
-}));
+// app.use('/images', express.static(__dirname + '/public/images/', {
+//     setHeaders: (res, path, stat) => {
+//         if (path.endsWith('.ico')) {
+//             res.set('Content-Type', 'image/x-icon');
+//         }
+//     }
+// }));
 
-
-// Use environment variables
 const sheetId = process.env.SHEET_ID;
 const tabName = process.env.TAB_NAME;
 const ipTabList = process.env.IP_TAB_LIST;
@@ -59,8 +60,8 @@ async function getRowCount(googleSheetClient, sheetId, tabName, range) {
         range: `${tabName}!${range}`,
     });
 
-    const rows = response.data.values; // This gives you all the data in the range
-    return rows ? rows.length : 0; // Count the number of rows, return 0 if no rows
+    const rows = response.data.values;
+    return rows ? rows.length : 0;
 }
 
 app.get('/information/:id', async (req, res) => {
@@ -141,13 +142,12 @@ app.get('/data', async (req, res) => {
         const gSheetClient = await _getGoogleSheetClient();
         const response = await _readGoogleSheet(gSheetClient, sheetId, tabName, range); // No need for `new Promise`
 
-        let result = []; // Declare result properly with `let`
+        let result = [];
         response.forEach(element => {
-            if (element[4] === 'FALSE') { // Use `===` for strict comparison
-                result.push(element); // Use `push` instead of `append`
+            if (element[4] === 'FALSE') {
+                result.push(element);
             }
         });
-
         res.send(result); // Send filtered result
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -164,12 +164,59 @@ app.post('/create', async (req, res) => {
     return res.send("")
 });
 
+app.post('/resetSheet', async (req, res) => {
+    const gSheetClient = await _getGoogleSheetClient();
+    const response = await _readGoogleSheet(gSheetClient, sheetId, tabName, range);
+    let result = [];
+    response.forEach(element => {
+        if (element[4] === 'FALSE') {
+            result.push(element);
+        }
+    });
+    rowCount = await getRowCount(gSheetClient, sheetId, tabName, range)
+    let firstRow;
+    try {
+        const response = await gSheetClient.spreadsheets.values.get({
+            spreadsheetId: sheetId,
+            range: `${tabName}!1:1` 
+        });
+        firstRow = response.data.values ? response.data.values[0] : [];
+    } catch (error) {
+        console.error('Error reading the first row:', error);
+        return res.status(500).send('Error reading the first row');
+    }
+    setTimeout(()=>{}, 3000);
+    try {
+        const rangeToClear = `${tabName}!2:${rowCount}`;
+        await gSheetClient.spreadsheets.values.clear({
+            spreadsheetId: sheetId,
+            range: rangeToClear
+        });
+    } catch (error) {
+        console.error('Error clearing the sheet:', error);
+        return res.status(500).send('Error clearing the sheet');
+    }
+
+    for (let i = 0; i < result.length; i++){
+        const gSheetClient1 = await _getGoogleSheetClient();
+        requestData=result[i]
+        formResult = [i+1, requestData[1], requestData[2], requestData[3], 'FALSE', requestData[5]]
+        await _writeGoogleSheet(gSheetClient1, sheetId, tabName, range, [formResult])
+        
+    }
+    return res.send("Success")
+})
+
 app.get('/', async (req, res) => {
     res.render('home');
 });
 
+app.get('/admin', async (req, res) => {
+    res.render('admin');
+});
+
 app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+    console.log('Server is running on port 3000.\nhttp://localhost:3000/');
 });
 
 module.exports = app;

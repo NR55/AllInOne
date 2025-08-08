@@ -1,0 +1,212 @@
+:root {
+  --background-color-dark: #121212;
+  --text-color-dark: #f0f0f0;
+  --card-background-dark: #1e1e1e;
+  --border-color-dark: #333;
+  --button-bg-dark: #333;
+  --button-hover-bg-dark: #555;
+
+  --background-color-light: #f4f4f9;
+  --text-color-light: #333;
+  --card-background-light: #fff;
+  --border-color-light: #ddd;
+  --button-bg-light: #007bff;
+  --button-hover-bg-light: #0056b3;
+}
+
+/* Default to dark mode */
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--background-color-dark);
+  color: var(--text-color-dark);
+  margin: 0;
+  padding: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 30px;
+}
+
+h1,
+h3 {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color-dark);
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.priority-list {
+  border: 1px solid var(--border-color-dark);
+  border-radius: 8px;
+  padding: 20px;
+  width: 30%;
+  background-color: var(--card-background-dark);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.priority-list h3 {
+  border-bottom: 1px solid var(--border-color-dark);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.priority-list ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color-dark);
+}
+
+.priority-list ul li:last-child {
+  border-bottom: none;
+}
+
+.priority-list button {
+  padding: 6px 12px;
+  font-size: 0.9em;
+  border: none;
+  background-color: var(--button-bg-dark);
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.priority-list button:hover {
+  background-color: var(--button-hover-bg-dark);
+}
+
+/* Styles for modal (popup) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: var(--card-background-dark);
+  margin: 10% auto;
+  padding: 30px;
+  border-radius: 10px;
+  width: 350px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #fff;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  margin-bottom: 6px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+form input,
+form textarea,
+form select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color-dark);
+  margin-bottom: 15px;
+  font-size: 1em;
+  background-color: var(--card-background-dark);
+  color: var(--text-color-dark);
+}
+
+form button {
+  padding: 10px;
+  font-size: 1em;
+  background-color: #28a745;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #218838;
+}
+
+.priority-range {
+  display: flex;
+  justify-content: space-between;
+}
+
+#modalButtons {
+  padding: 10px 20px;
+  font-size: 1em;
+  color: white;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#modalButtons:hover {
+  background-color: #218838;
+}
+
+/* Light mode styles */
+body.light-mode {
+  background-color: var(--background-color-light);
+  color: var(--text-color-light);
+}
+
+.priority-list.light-mode {
+  background-color: var(--card-background-light);
+  border-color: var(--border-color-light);
+}
+
+h1.light-mode,
+h3.light-mode {
+  color: var(--text-color-light);
+}
+
+.modal-content.light-mode {
+  background-color: var(--card-background-light);
+}
+
+form input.light-mode,
+form textarea.light-mode {
+  background-color: var(--card-background-light);
+  color: var(--text-color-light);
+}
+
+.priority-list button.light-mode {
+  background-color: var(--button-bg-light);
+}
+
+.priority-list button.light-mode:hover {
+  background-color: var(--button-hover-bg-light);
+}
